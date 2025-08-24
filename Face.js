@@ -52,17 +52,16 @@ function draw() {
     vPadding = ((windowH-140) - (Frows*squareSize))/2;
     for (r = 0; r < Frows; r++) {
         for (c = 0; c < Fcolumns; c++) {
-            if ((windowW/4 + (squareSize * c) + hPadding) < mouseX && mouseX < (windowW/4 + (squareSize * c) + hPadding + squareSize) && (120 + (squareSize * r) + vPadding) < mouseY && mouseY < (120 + (squareSize * r) + vPadding + squareSize)) {
-                fill('red');
-            }
             if (grid[r][c] === -1) {
                 fill('Black');
             }
             else {
                 fill(colors[grid[r][c]]);
             }
+            if ((windowW/4 + (squareSize * c) + hPadding) < mouseX && mouseX < (windowW/4 + (squareSize * c) + hPadding + squareSize) && (120 + (squareSize * r) + vPadding) < mouseY && mouseY < (120 + (squareSize * r) + vPadding + squareSize)) {
+                fill('yellow');
+            }
             rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
-            fill('white');
         }
     }
 }

@@ -1,5 +1,5 @@
 const grid = [];
-const colors = ['#FFFAF0', '#3737ffff', '#136b13ff', '#FF0000', '#000080', '#DC143C', '#008B8B', '#4B0082', '#FF1493']
+const colors = ['#FFFAF0', '#3737ffff', '#136b13ff', '#fd2d2dff', '#000080', '#DC143C', '#008B8B', '#4B0082', '#FF1493']
 
 // function getRandomInt(max) {
 //   return Math.floor(Math.random() * max);
@@ -52,7 +52,7 @@ for (i = 0; i < rows; i++) {
     grid[i] = [];
     for (c = 0; c < columns; c++) {
         grid[i][c] = 0;
-        if (getRandomInt(0, 2) == 0) {
+        if (getRandomInt(0, 9) == 0) {
             grid[i][c] = -1;
         } 
     }
