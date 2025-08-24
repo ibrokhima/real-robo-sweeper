@@ -1,0 +1,44 @@
+for (i = 0; i < rows*columns; i++) {
+    let r = Math.floor(i/columns);
+    let c = (i % columns);
+    let val = 0;
+    if (Number.isInteger(grid[r][c])) {
+        console.log("r", r);
+        console.log("c", c);
+        if (r == 0) {
+            rowScn = 0;
+        }
+        else {
+            rowScn = -1;
+        }
+        if (c == 0) {
+            colScn = 0;
+        }
+        else {
+            colScn = -1;
+        }
+        console.log(rowScn, colScn);
+        
+        for (; rowScn <= 1; rowScn++) {
+            for (; colScn <= 1; colScn++) {
+                if (typeof grid[r + rowScn][c + colScn] === 'string') {
+                    val++;
+                    console.log("val");
+                }
+            }
+        }
+        console.log(val);
+        grid[r][c] = val;
+    }
+}
+
+
+
+
+//
+        //if (i == 0 || i == (rows-1)) {
+        //    grid[i][c] = "💣";
+        //}
+        //if (c == 0 || c == (columns-1)) {
+        //    grid[i][c] = "💣";
+        //}
