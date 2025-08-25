@@ -1,10 +1,6 @@
 const grid = [];
 const colors = ['#FFFAF0', '#3737ffff', '#136b13ff', '#fd2d2dff', '#000080', '#DC143C', '#008B8B', '#4B0082', '#FF1493']
 
-// function getRandomInt(max) {
-//   return Math.floor(Math.random() * max);
-// }
-
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
@@ -61,12 +57,11 @@ for (i = 0; i < rows; i++) {
 //Need to go to every square, check the 9 squares around it, track mines and change own value. Must deal with edges properly
 for (r = 0; r < rows; r++) {
     for (c = 0; c < columns; c++) {
-        console.log("r:", r, "c:", c);
-        console.log(checkSurr(r, c));
+        //console.log("r:", r, "c:", c);
+        //console.log(checkSurr(r, c));
         grid[r][c] = checkSurr(r, c);
     }
 }
-
 
 console.log("heyy");
 console.table(grid);

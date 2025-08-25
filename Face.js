@@ -1,4 +1,3 @@
-//<reference path="https://unpkg.com/@types/p5/index.d.ts" />
 function setup() {
     createCanvas(windowWidth, windowHeight);
     frameRate(60);
