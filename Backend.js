@@ -1,13 +1,17 @@
 const grid = [];
-const colors = ['#FFFAF0', '#3737ffff', '#136b13ff', '#fd2d2dff', '#000080', '#DC143C', '#008B8B', '#4B0082', '#FF1493']
+const overlayGrid = [];
+const colors = ['#FFFAF0', '#3737ffff', '#136b13ff', '#fd2d2dff', '#000080', '#DC143C', '#008B8B', '#4B0082', '#FF1493', '#500000', '#646464ff']
+let choice = 1;
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-let rows = getRandomInt(10, 50);
-let columns = getRandomInt(10, 50);
+let rows = getRandomInt(10, 15);
+let columns = getRandomInt(10, 15);
 
+
+//CAN USE CHECKSURR FUNCTION TO BE ABLE TO POP ALL EMPTIES
 function checkSurr(r, c) {
     if (grid[r][c] == 0) {
         let rowScn = -1;
@@ -43,13 +47,13 @@ function checkSurr(r, c) {
 }
 
 //Need to populate the grid with ROWS amount of lists, each list with COLUMNS amount of values (0 for now)
-for (i = 0; i < rows; i++) {
+for (r = 0; r < rows; r++) {
     console.log("Populating 0'd grid")
-    grid[i] = [];
+    grid[r] = [];
     for (c = 0; c < columns; c++) {
-        grid[i][c] = 0;
+        grid[r][c] = 0;
         if (getRandomInt(0, 9) == 0) {
-            grid[i][c] = -1;
+            grid[r][c] = -1;
         } 
     }
 } 
@@ -57,14 +61,18 @@ for (i = 0; i < rows; i++) {
 //Need to go to every square, check the 9 squares around it, track mines and change own value. Must deal with edges properly
 for (r = 0; r < rows; r++) {
     for (c = 0; c < columns; c++) {
-        //console.log("r:", r, "c:", c);
-        //console.log(checkSurr(r, c));
         grid[r][c] = checkSurr(r, c);
     }
 }
 
-console.log("heyy");
-console.table(grid);
+for (r = 0; r < rows; r++) {
+    overlayGrid[r] = [];
+    for (c = 0; c < columns; c++) {
+        overlayGrid[r][c] = 10;
+    }
+}
 
-document.getElementById("output").innerHTML = grid.join("<br>");
+console.table(grid);
+// document.getElementById("output").innerHTML = grid.join("<br>");
+// document.getElementById("overlay").innerHTML = overlayGrid.join("<br>");
 
