@@ -5,8 +5,12 @@ function setup() {
     windowW = windowWidth;
     loss = false;
     timer = 0;
-    //rect(959, 0, 2, windowHeight); //center line vert
-    //rect(0, windowHeight/2-1, windowWidth, 2); //center line horiz
+    squareSize = (windowW/2)/columns;
+    if (squareSize * rows  > windowH - 140) {
+        squareSize = (windowH - 140)/rows;
+    }
+    hPadding = ((windowW/2) - (columns*squareSize))/2;
+    vPadding = ((windowH-140) - (rows*squareSize))/2;
 }
 
 document.oncontextmenu = function() { //removes rightclick context menu
@@ -14,7 +18,7 @@ document.oncontextmenu = function() { //removes rightclick context menu
     }
 
 function frameUI() {    //setup the background frame
-    background('#a3a3a3');
+    background('#aaaaaaff');
     strokeWeight(.5);
     fill(30);
     rect(windowW/4, 20, windowW/2, windowH - 40);
@@ -23,7 +27,18 @@ function frameUI() {    //setup the background frame
     textAlign(CENTER);
     textFont('Verdana', windowW * .03);
     fill(255);
-    //text('💣MINESWEEPER💣', windowW/2, 90);
+    //ominous timer
+    let secondsTotal = Math.round(frameCount/60);
+    let minutes = Math.round(secondsTotal/60);
+    let seconds = secondsTotal % 60;
+    textFont('Courier New', windowW * .025);
+    fill('red');
+    if (minutes == 0) {
+        text(seconds, windowW/2, 90);
+    }
+    else {
+        text(minutes + ':' + seconds, windowW/2, 90);
+    }
 }
 
 function debug() {
@@ -36,23 +51,13 @@ function debug() {
 function game() {
     fill(255);
     strokeWeight(.5);
-    squareSize = (windowW/2)/columns;
-    if (squareSize * rows  > windowH - 140) {
-        squareSize = (windowH - 140)/rows;
-    }
-    hPadding = ((windowW/2) - (columns*squareSize))/2;
-    vPadding = ((windowH-140) - (rows*squareSize))/2;
     for (r = 0; r < rows; r++) {
         for (c = 0; c < columns; c++) {
-            if (overlayGrid[r][c] === -1) {
-                loss = true;
-                console.log("you lost");
+            if ((windowW/4 + (squareSize * c) + hPadding) < mouseX && mouseX < (windowW/4 + (squareSize * c) + hPadding + squareSize) && (120 + (squareSize * r) + vPadding) < mouseY && mouseY < (120 + (squareSize * r) + vPadding + squareSize)) {
+                fill("yellow");
             }
             else {
                 fill(colors[overlayGrid[r][c]]);
-            }
-            if ((windowW/4 + (squareSize * c) + hPadding) < mouseX && mouseX < (windowW/4 + (squareSize * c) + hPadding + squareSize) && (120 + (squareSize * r) + vPadding) < mouseY && mouseY < (120 + (squareSize * r) + vPadding + squareSize)) {
-                fill("yellow");
             }
             rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
         }
@@ -70,26 +75,35 @@ function mousePressed() {
             overlayGrid[rowSelected][colSelected] = 9;
         }
     }
+    else if (grid[rowSelected][colSelected] === -1) {
+        loss = true;
+    }
+    else if (grid[rowSelected][colSelected] === 0) {
+        for (r = 0; r < rows; r++) {
+            for (c = 0; c < columns; c++) {
+                if (grid[r][c] === 0) {
+                    overlayGrid[r][c] = 0; //FIGURE SOMETHING OUT THIS IS LITERALLY THE LAST STEP
+                }
+            }
+        }
+    }
     else {
         overlayGrid[rowSelected][colSelected] = grid[rowSelected][colSelected];
     }
 }
 
 function draw() {
-    if (choice === 1) {
-        frameUI();
-        game();
-        debug();
-        if (loss) {
-            frameRate(1);
-            console.log('game is over');
-            background('#a3a3a3');
-            textSize(48);
-            text("YOU LOST", windowW/2, windowH/2);
-            timer++;
-            if (timer >= 5) {
-                location.reload();
-            }
-        }
+    frameUI();
+    game();
+    debug();
+    if (loss) {
+        frameRate(1);
+        background('#aaaaaaff');
+        textSize(48);
+        text("YOU LOST", windowW/2, windowH/2);
+        timer++;
+        if (timer >= 5) {
+            location.reload();
+        }  
     }
 }

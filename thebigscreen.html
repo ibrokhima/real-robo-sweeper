@@ -9,10 +9,19 @@
 
     </head>
     <body>
-          <!-- <div id="output"></div>
-          <div id="overlay"></div> -->
-          <script src="Backend.js"> </script>
-          <script src="Game.js"> </script>
-          <script src="TTT.js"> </script>
+        <!-- <div id="output"></div>
+        <div id="overlay"></div> -->
+        <script src="Backend.js"> </script>
+        <script> 
+          let gamePlaying = document.createElement("script");
+          if (gameChoice === 1) {
+            gamePlaying.src = "MS.js";
+
+          } 
+          else {
+            gamePlaying.src = "TTT.js";
+          }
+          document.body.append(gamePlaying);
+        </script>
     </body>
 </html>

@@ -1,7 +1,7 @@
 const grid = [];
 const overlayGrid = [];
-const colors = ['#FFFAF0', '#3737ffff', '#136b13ff', '#fd2d2dff', '#000080', '#DC143C', '#008B8B', '#4B0082', '#FF1493', '#500000', '#646464ff']
-let choice = 1;
+const colors = ['#FFFAF0', '#3737ffff', '#136b13ff', '#fd2d2dff', '#000080', '#DC143C', '#008B8B', '#4B0082', '#FF1493', '#500000', '#808080']
+let gameChoice = 1;
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
