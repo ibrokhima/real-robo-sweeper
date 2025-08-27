@@ -29,12 +29,15 @@ function frameUI() {    //setup the background frame
     fill(255);
     //ominous timer
     let secondsTotal = Math.round(frameCount/60);
-    let minutes = Math.round(secondsTotal/60);
+    let minutes = Math.floor(secondsTotal/60);
     let seconds = secondsTotal % 60;
     textFont('Courier New', windowW * .025);
     fill('red');
     if (minutes == 0) {
         text(seconds, windowW/2, 90);
+    }
+    else if (seconds < 10) {
+        text(minutes + ':0' + seconds, windowW/2, 90)
     }
     else {
         text(minutes + ':' + seconds, windowW/2, 90);
@@ -95,7 +98,7 @@ function mousePressed() {
 function draw() {
     frameUI();
     game();
-    debug();
+    //debug();
     if (loss) {
         frameRate(1);
         background('#aaaaaaff');

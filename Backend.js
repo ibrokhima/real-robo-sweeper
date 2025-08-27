@@ -7,8 +7,8 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-let rows = getRandomInt(10, 15);
-let columns = getRandomInt(10, 15);
+let rows = getRandomInt(10, 25);
+let columns = getRandomInt(10, 25);
 
 
 //CAN USE CHECKSURR FUNCTION TO BE ABLE TO POP ALL EMPTIES
