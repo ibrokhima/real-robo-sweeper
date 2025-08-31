@@ -1,6 +1,6 @@
 function setup() {
     createCanvas(windowWidth, windowHeight);
-    frameRate(60);
+    frameRate(30);
     windowH = windowHeight;
     windowW = windowWidth;
     loss = false;
@@ -19,16 +19,16 @@ document.oncontextmenu = function() { //removes rightclick context menu
 
 function frameUI() {    //setup the background frame
     background('#aaaaaaff');
-    strokeWeight(.5);
+    strokeWeight(1);
     fill(30);
     rect(windowW/4, 20, windowW/2, windowH - 40);
-    fill(55);
+    fill(45);
     rect(windowW/4, 120, windowW/2, windowH - 140);
     textAlign(CENTER);
     textFont('Verdana', windowW * .03);
     fill(255);
     //ominous timer
-    let secondsTotal = Math.round(frameCount/60);
+    let secondsTotal = Math.round(frameCount/30);
     let minutes = Math.floor(secondsTotal/60);
     let seconds = secondsTotal % 60;
     textFont('Courier New', windowW * .025);
@@ -53,29 +53,99 @@ function debug() {
 
 function game() {
     fill(255);
-    strokeWeight(.5);
+    strokeWeight(.75);
     for (r = 0; r < rows; r++) {
         for (c = 0; c < columns; c++) {
             if ((windowW/4 + (squareSize * c) + hPadding) < mouseX && mouseX < (windowW/4 + (squareSize * c) + hPadding + squareSize) && (120 + (squareSize * r) + vPadding) < mouseY && mouseY < (120 + (squareSize * r) + vPadding + squareSize)) {
                 fill("yellow");
+                rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
+            }
+            else if (overlayGrid[r][c] == 'flag') {
+                fill(colors[9]);
+                rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
+            }
+            else if (overlayGrid[r][c] == 'shown') {
+                fill(colors[grid[r][c]]);
+                rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
+                if (grid[r][c] < 9 && grid[r][c] != 0) {
+                    fill(0);
+                    textAlign(CENTER, CENTER);
+                    textFont('Verdana', squareSize/1.3);
+                    text(grid[r][c], windowW/4 + (squareSize * c) + hPadding + squareSize/2, 120 + (squareSize * r) + vPadding + squareSize/1.75);
+                }
             }
             else {
-                fill(colors[overlayGrid[r][c]]);
+                fill(colors[10]);
+                rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
             }
-            rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
         }
     }
 }
 
+function findItem(matrix, LF) {
+    console.log('last breadth inside func: ' + LF);
+    if (LF === -1) {
+        return;
+    }
+    else {
+        for (let i = 0; i < matrix.length; i++) {
+            rowLF = matrix[i];
+            colLF = rowLF.indexOf(LF);
+            if (colLF !== -1) {
+                return [i, colLF];    
+            }
+        }
+    }
+}
+
+function flood(rowSelectedF, colSelectedF, breadthFlag) {
+    console.log("flooding " + rowSelectedF + ' ' + colSelectedF + ' breadth: ' + breadthFlag);
+    if (grid[rowSelectedF][colSelectedF] === 0) {
+        zeroPop[rowSelectedF][colSelectedF] = breadthFlag;
+        let rowStart = colStart = -1;
+        let rowEnd = colEnd = 1;
+        if (rowSelectedF === 0) {
+            rowStart = 0; 
+        }
+        else if (rowSelectedF === rows - 1) {
+            rowEnd = 0;
+        }
+        if (colSelectedF === 0) {
+            colStart = 0;
+        } 
+        else if (colSelectedF === columns - 1) {
+            colEnd = 0;
+        }
+        for (rr = rowStart; rr <= rowEnd; rr++) {
+            for (cc = colStart; cc <= colEnd; cc++) {
+                overlayGrid[rowSelectedF + rr][colSelectedF + cc] = 'shown';
+            }
+        }
+        for (rr = rowStart; rr <= rowEnd; rr++) {
+            for (cc = colStart; cc <= colEnd; cc++) {
+                if (grid[rowSelectedF + rr][colSelectedF + cc] === 0 && zeroPop[rowSelectedF + rr][colSelectedF + cc] < 0) {
+                    flood(rowSelectedF + rr, colSelectedF + cc, breadthFlag + 1);
+                }
+            }
+        }
+        let lastBreadth = findItem(zeroPop, breadthFlag - 1);
+        if (lastBreadth != undefined) {
+            flood(lastBreadth[0], lastBreadth[1], breadthFlag);
+        }
+    }
+}
+
+
 function mousePressed() {
     rowSelected = Math.floor((mouseY - 120 - vPadding)/squareSize);
     colSelected = Math.floor((mouseX - windowW/4 - hPadding)/squareSize);
+    console.log(rowSelected + '<-row | col->' + colSelected);
     if (mouseButton === RIGHT) {
-        if (overlayGrid[rowSelected][colSelected] === 9) {
-            overlayGrid[rowSelected][colSelected] = 10;
+        if (overlayGrid[rowSelected][colSelected] === 'hidden') {
+            overlayGrid[rowSelected][colSelected] = 'flag';
         }
-        else {
-            overlayGrid[rowSelected][colSelected] = 9;
+        else if (overlayGrid[rowSelected][colSelected] === 'flag') {
+            overlayGrid[rowSelected][colSelected] = 'hidden';
         }
     }
     else if (grid[rowSelected][colSelected] === -1) {
@@ -83,30 +153,33 @@ function mousePressed() {
     }
     else if (grid[rowSelected][colSelected] === 0) {
         for (r = 0; r < rows; r++) {
+            zeroPop[r] = [];
             for (c = 0; c < columns; c++) {
-                if (grid[r][c] === 0) {
-                    overlayGrid[r][c] = 0; //FIGURE SOMETHING OUT THIS IS LITERALLY THE LAST STEP
-                }
+                zeroPop[r][c] = -1;
             }
         }
+        flood(rowSelected, colSelected, 0);
     }
     else {
-        overlayGrid[rowSelected][colSelected] = grid[rowSelected][colSelected];
+        overlayGrid[rowSelected][colSelected] = 'shown';
     }
 }
 
 function draw() {
-    frameUI();
-    game();
-    //debug();
     if (loss) {
         frameRate(1);
         background('#aaaaaaff');
         textSize(48);
+        fill(0);
         text("YOU LOST", windowW/2, windowH/2);
         timer++;
-        if (timer >= 5) {
+        if (timer >= 3) {
             location.reload();
         }  
+    }
+    else {
+        frameUI();
+        game();
+        //debug();
     }
 }
