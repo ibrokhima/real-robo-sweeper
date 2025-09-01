@@ -1,5 +1,6 @@
 function setup() {
     createCanvas(windowWidth, windowHeight);
+    background('#aaaaaaff');
     frameRate(30);
     windowH = windowHeight;
     windowW = windowWidth;
@@ -17,21 +18,22 @@ document.oncontextmenu = function() { //removes rightclick context menu
         return false;
     }
 
-function frameUI() {    //setup the background frame
-    background('#aaaaaaff');
+function frameUI() { //setup the background frame
     strokeWeight(1);
     fill(30);
     rect(windowW/4, 20, windowW/2, windowH - 40);
     fill(45);
     rect(windowW/4, 120, windowW/2, windowH - 140);
-    textAlign(CENTER);
-    textFont('Verdana', windowW * .03);
+    textAlign(LEFT, BASELINE);
     fill(255);
+    textFont('Arial', windowW * .015);
+    text('Mines: ' + mines, windowW/4 + 10, 60);
     //ominous timer
     let secondsTotal = Math.round(frameCount/30);
     let minutes = Math.floor(secondsTotal/60);
     let seconds = secondsTotal % 60;
     textFont('Courier New', windowW * .025);
+    textAlign(CENTER, BASELINE);
     fill('red');
     if (minutes == 0) {
         text(seconds, windowW/2, 90);
@@ -51,8 +53,7 @@ function debug() {
     text('Fcolumns: ' + columns, 50, 100);
 }
 
-function game() {
-    fill(255);
+function game() { //generate the grid
     strokeWeight(.75);
     for (r = 0; r < rows; r++) {
         for (c = 0; c < columns; c++) {
@@ -67,7 +68,7 @@ function game() {
             else if (overlayGrid[r][c] == 'shown') {
                 fill(colors[grid[r][c]]);
                 rect(windowW/4 + (squareSize * c) + hPadding, 120 + (squareSize * r) + vPadding, squareSize, squareSize);
-                if (grid[r][c] < 9 && grid[r][c] != 0) {
+                if (grid[r][c] != 0) {
                     fill(0);
                     textAlign(CENTER, CENTER);
                     textFont('Verdana', squareSize/1.3);
@@ -83,7 +84,6 @@ function game() {
 }
 
 function findItem(matrix, LF) {
-    console.log('last breadth inside func: ' + LF);
     if (LF === -1) {
         return;
     }
@@ -99,7 +99,6 @@ function findItem(matrix, LF) {
 }
 
 function flood(rowSelectedF, colSelectedF, breadthFlag) {
-    console.log("flooding " + rowSelectedF + ' ' + colSelectedF + ' breadth: ' + breadthFlag);
     if (grid[rowSelectedF][colSelectedF] === 0) {
         zeroPop[rowSelectedF][colSelectedF] = breadthFlag;
         let rowStart = colStart = -1;
@@ -135,7 +134,6 @@ function flood(rowSelectedF, colSelectedF, breadthFlag) {
     }
 }
 
-
 function mousePressed() {
     rowSelected = Math.floor((mouseY - 120 - vPadding)/squareSize);
     colSelected = Math.floor((mouseX - windowW/4 - hPadding)/squareSize);
@@ -143,9 +141,11 @@ function mousePressed() {
     if (mouseButton === RIGHT) {
         if (overlayGrid[rowSelected][colSelected] === 'hidden') {
             overlayGrid[rowSelected][colSelected] = 'flag';
+            mines--;
         }
         else if (overlayGrid[rowSelected][colSelected] === 'flag') {
             overlayGrid[rowSelected][colSelected] = 'hidden';
+            mines++;
         }
     }
     else if (grid[rowSelected][colSelected] === -1) {
@@ -153,7 +153,6 @@ function mousePressed() {
     }
     else if (grid[rowSelected][colSelected] === 0) {
         for (r = 0; r < rows; r++) {
-            zeroPop[r] = [];
             for (c = 0; c < columns; c++) {
                 zeroPop[r][c] = -1;
             }
@@ -169,7 +168,8 @@ function draw() {
     if (loss) {
         frameRate(1);
         background('#aaaaaaff');
-        textSize(48);
+        textFont('Verdana', 64);
+        textAlign(CENTER, BASELINE);
         fill(0);
         text("YOU LOST", windowW/2, windowH/2);
         timer++;
